@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+</head>
+<body>
+
+<--
+<style border:2px color=blue></style>
+ <svg width:"300" height:"200";>
+       <circle cx='150' cy="120" r="15"></circle>
+        <rect x="160" y="45" height="75" width="5"></rect>        
+    </svg>
+    -->
+    
+    
+<script>
+    d3.select("svg").append("circle").attr("cx",150).attr("cy",120).attr("r",15);
+    d3.select("svg").append("rect").attr({
+        x:150
+        y:120
+        r:15
+    })
+    
+
+</script>
+
+</body>
+</html>
