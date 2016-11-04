@@ -1,46 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+
 <head>
-<script src="https://d3js.org/d3.v3.js"></script>
-<script src="script.js"></script>
- <link rel="stylesheet" type="text/css" href="main.css">
-<title>Happy Birthday My Mom</title>
+    <meta charset="UTF-8">
+    <title>HW04</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
 </head>
 <body>
-<h3>
-Happy Birthday My Mom!!!<br>
-<img src="cat.jpg"></img><br>
-<svg width="8000" height="300" stroke="lightblue">
-<ellipse cx="500" cy="100"rx="150" ry="30" fill="pink"></ellipse>
-<rect x="350" y="95" width="300" height="150" fill="brown"></rect>
-<ellipse cx="500" cy="250"rx="200" ry="30" fill="white" stroke="blue" stroke-width=1></ellipse>
-<line x1="450" y1="50" x2="450" y2="100" stroke="red" stroke-width="2" ></line>
-<circle cx="450" cy="50" r="8" fill="yellow"></circle>
+    <div>
+        <h2>製作長條圖-2016年8月&&台北市&&發票金額>10億元的項目</h2></div>
+    <svg width="600" height="200"></svg>
+    <script>
+        d3.json("invoice-taipei.json", function (dataSet) {
+            var svg = d3.select("svg");
+            var count = 0;
+            for (var i = 0; i < dataSet.length; i++) {
+                if (dataSet[i].date === "2016/8/1" && dataSet[i].cid === "A" && parseInt(dataSet[i].amount) > 1000000000) {
+                    d3.select("svg")
+                        .append("rect")
+                        .attr({
+                            x: 200,
+                            y: 10 + 16 * count,
+                            width: dataSet[i].amount / 100000000,
+                            height: 10,
+                            fill: "red"
+                        });
+                    d3.select("svg")
+                        .append("text")
+                        .attr({
+                            x: 0,
+                            y: 16 + 16 * count,
+                            "font-size": 12
+                        }).text(dataSet[i].industry);
+                    count++;
+                }
+            }
+        });
+    </script>
 
-<line x1="500" y1="50" x2="500" y2="100" stroke="red" stroke-width="2" ></line>
-<circle cx="500" cy="50" r="8" fill="yellow"></circle>
+    <div>
+        <h2>把數字小於70改成紅色</h2></div>
+    <div id="h2"></div>
+    <script>
+        var arr2 = [85, 60, 99, 49, 77, 82];
+        bind(arr2);
+        render();
 
-<line x1="550" y1="50" x2="550" y2="100" stroke="red" stroke-width="2" ></line>
-<circle cx="550" cy="50" r="8" fill="yellow"></circle>
-<text x="350" y="150" fill="pink" font-size="40" font-family=“simsum” >Always LoVe YoU</text >
+        function bind(data) {
+            var selection = d3.select("body")
+                .selectAll("#h2")
+                .data(data);
+            selection.enter().append("div").attr({
+                id: "h2"
+            });
+            selection.exit().remove();
+        }
 
+        function render() {
+            d3.selectAll("div#h2").text(function (d, i) {
+                return i + 1 + ": " + d;
+            });
+        }
+        d3.selectAll("div#h2").style({
+            color: function (d) {
+                if (d < 70) {
+                    return "red";
+                } else {
+                    return "black";
+                }
+            }
+        })
+    </script>
+    
+    <div>
+        <h2>建立簡單動態圖表</h2></div>
+    <div>
+        <input type="button" value="add" onclick="add()">
+        <input type="button" value="del" onclick="del()">
+    </div>
+    <script>
+        var h = 200;
+        var w = 1500;
+        var p = 50;
 
-</svg>
+        var arr = [45, 76, 96, 35, 88, 69];
 
-<div>
-親愛的媽媽:<p>
-祝您生日快樂!<p>
-謝謝你!讓我跟神佛、師父、師姐接上這個緣分<p>
-而我們也過得越來越快樂、越來越開心~<p>
-最近也有感受到你的喜悅唷<p>
-我們一起努力，把心修得越來越好，把家一點一滴地重建起來、每個人都能感到這個家是幸福及溫暖的!<p>
-謝謝你來到這世上!也謝謝你讓我來到這世上!<p>
-更謝謝你的改變!讓我們一起更好吧!!!<p>
-邁向充滿希望的未來吧~~~哈哈哈~~~Fightting !!!<br>
-</div>
+        svg(w, h, p);
+        bind(arr);
+        render(w, h, p);
+        bind2(arr);
+        render2(w, h, p);
 
+        function svg(w, h, p) {
+            d3.select("body").append("svg").attr({
+                id: "svg2",
+                width: w,
+                height: h
+            })
+        }
 
+        function add() {
+            var num = random(20, 100);
+            arr.push(num);
+            console.log(arr);
+            bind(arr);
+            render(w, h, p);
+            bind2(arr);
+            render2(w, h, p);
+        }
 
+        function del() {
+            var num = random(20, 100);
+            arr.pop(num);
+            console.log(arr);
+            bind(arr);
+            render(w, h, p);
+            bind2(arr);
+            render2(w, h, p);
+        }
 
+        function bind(data) {
+            var selection = d3.select("#svg2")
+                .selectAll("rect")
+                .data(data);
+            selection.enter().append("rect");
+            selection.exit().remove();
+        }
+
+        function render(w, h, p) {
+            d3.select("#svg2")
+                .selectAll("rect").attr({
+                    x: function (d, i) {
+                        return p + 45 * i;
+                    },
+                    y: function (d) {
+                        return h - p - d;
+                    },
+                    width: 40,
+                    height: function (d) {
+                        return d;
+                    },
+                    fill: function (d) {
+                        if (d < 70) {
+                            return "red";
+                        } else {
+                            return "lightblue";
+                        }
+                    }
+                })
+        }
+
+        function bind2(data) {
+            var selection = d3.select("#svg2")
+                .selectAll("text")
+                .data(data);
+            selection.enter().append("text");
+            selection.exit().remove();
+        }
+
+        function render2(w, h, p) {
+            d3.select("#svg2")
+                .selectAll("text").attr({
+                    x: function (d, i) {
+                        return p + 12 + 45 * i;
+                    },
+                    y: function (d) {
+                        return h - p + 20;
+                    },
+                    width: 40,
+                    height: function (d) {
+                        return d;
+                    },
+                    fill: "black"
+                }).text(function (d) {
+                    return d;
+                })
+        }
+
+        function random(n, m) {
+            return Math.ceil(Math.random() * (m - n) + n);
+        }
+    </script>
 </body>
 </html>
